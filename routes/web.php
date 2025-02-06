@@ -21,7 +21,7 @@ Route::middleware([
     Route::get('/easy', [SslCommerzPaymentController::class, 'easyCheckout'])->name('easy-checkout');
     Route::get('/hosted', [SslCommerzPaymentController::class, 'hostedCheckout'])->name('hosted-checkout');
 
-    Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
+    Route::post('/hosted-pay', [SslCommerzPaymentController::class, 'index'])->name('hosted.pay');
     Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);
 
     Route::post('/success', [SslCommerzPaymentController::class, 'success']);

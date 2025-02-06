@@ -63,7 +63,7 @@
 
                     <!-- Billing Form -->
                     <div class="md:col-span-2">
-                        <form action="{{ url('/pay') }}" method="POST" class="space-y-6" @submit.prevent="submitForm">
+                        <form action="{{ route('hosted.pay') }}" method="POST" class="space-y-6">
                             @csrf
                             <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
                                 <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Billing Details
@@ -144,17 +144,6 @@
                 },
                 removeItem(index) {
                     this.items.splice(index, 1);
-                },
-                submitForm() {
-                    // Here you can handle the form submission
-                    const formData = {
-                        ...this.formData,
-                        amount: this.total,
-                        items: this.items
-                    };
-
-                    // Submit the form
-                    document.querySelector('form').submit();
                 }
             }));
         });
