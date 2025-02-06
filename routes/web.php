@@ -18,8 +18,8 @@ Route::middleware([
 
 
     // SSLCOMMERZ Start
-    Route::get('/easy', [SslCommerzPaymentController::class, 'easyCheckout']);
-    Route::get('/hosted', [SslCommerzPaymentController::class, 'hostedCheckout']);
+    Route::get('/easy', [SslCommerzPaymentController::class, 'easyCheckout'])->name('easy-checkout');
+    Route::get('/hosted', [SslCommerzPaymentController::class, 'hostedCheckout'])->name('hosted-checkout');
 
     Route::post('/pay', [SslCommerzPaymentController::class, 'index']);
     Route::post('/pay-via-ajax', [SslCommerzPaymentController::class, 'payViaAjax']);

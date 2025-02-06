@@ -1,188 +1,163 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="SSLCommerz">
-    <title>Example - Hosted Checkout | SSLCommerz</title>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+            {{ __('Hosted Checkout') }}
+        </h2>
+    </x-slot>
 
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <div class="py-12" x-data="cart">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">Hosted Payment - SSLCommerz</h2>
+                    <p class="text-gray-600 dark:text-gray-300">Complete your purchase securely with SSLCommerz payment
+                        gateway</p>
+                </div>
 
-    <style>
-        .bd-placeholder-img {
-            font-size: 1.125rem;
-            text-anchor: middle;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Cart Summary -->
+                    <div class="md:col-span-1">
+                        <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800 dark:text-white">Your Cart</h3>
+                                <span class="bg-blue-500 text-white px-2 py-1 rounded-full text-sm"
+                                    x-text="`${items.length} Items`"></span>
+                            </div>
 
-        @media (min-width: 768px) {
-            .bd-placeholder-img-lg {
-                font-size: 3.5rem;
-            }
-        }
-    </style>
-</head>
-<body class="bg-light">
-<div class="container">
-    <div class="py-5 text-center">
-        <h2>Hosted Payment - SSLCommerz</h2>
-        <p class="lead">Below is an example form built entirely with Bootstrap’s form controls. We have provided this sample form for understanding Hosted Checkout Payment with SSLCommerz.</p>
-    </div>
+                            <div class="space-y-4">
+                                <!-- Cart Items -->
+                                <template x-for="(item, index) in items" :key="index">
+                                    <div class="border-b dark:border-gray-600 pb-4">
+                                        <div class="flex justify-between items-start">
+                                            <div>
+                                                <h4 class="font-medium text-gray-800 dark:text-white"
+                                                    x-text="item.name"></h4>
+                                                <p class="text-sm text-gray-500 dark:text-gray-400"
+                                                    x-text="item.description"></p>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <span class="text-gray-600 dark:text-gray-300"
+                                                    x-text="`${item.price} TK`"></span>
+                                                <button @click="removeItem(index)"
+                                                    class="text-red-500 hover:text-red-700">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                        viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </template>
 
-    <div class="row">
-        <div class="col-md-4 order-md-2 mb-4">
-            <h4 class="d-flex justify-content-between align-items-center mb-3">
-                <span class="text-muted">Your cart</span>
-                <span class="badge badge-secondary badge-pill">3</span>
-            </h4>
-            <ul class="list-group mb-3">
-                <li class="list-group-item d-flex justify-content-between lh-condensed">
-                    <div>
-                        <h6 class="my-0">Product name</h6>
-                        <small class="text-muted">Brief description</small>
-                    </div>
-                    <span class="text-muted">1000</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between lh-condensed">
-                    <div>
-                        <h6 class="my-0">Second product</h6>
-                        <small class="text-muted">Brief description</small>
-                    </div>
-                    <span class="text-muted">50</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between lh-condensed">
-                    <div>
-                        <h6 class="my-0">Third item</h6>
-                        <small class="text-muted">Brief description</small>
-                    </div>
-                    <span class="text-muted">150</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Total (BDT)</span>
-                    <strong>1200 TK</strong>
-                </li>
-            </ul>
-        </div>
-        <div class="col-md-8 order-md-1">
-            <h4 class="mb-3">Billing address</h4>
-            <form action="{{ url('/pay') }}" method="POST" class="needs-validation">
-                <input type="hidden" value="{{ csrf_token() }}" name="_token" />
-                <div class="row">
-                    <div class="col-md-12 mb-3">
-                        <label for="firstName">Full name</label>
-                        <input type="text" name="customer_name" class="form-control" id="customer_name" placeholder=""
-                               value="John Doe" required>
-                        <div class="invalid-feedback">
-                            Valid customer name is required.
+                                <!-- Total -->
+                                <div class="flex justify-between items-center pt-4">
+                                    <span class="font-semibold text-gray-800 dark:text-white">Total</span>
+                                    <span class="font-bold text-lg text-blue-600 dark:text-blue-400"
+                                        x-text="`${total} TK`"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label for="mobile">Mobile</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">+88</span>
-                        </div>
-                        <input type="text" name="customer_mobile" class="form-control" id="mobile" placeholder="Mobile"
-                               value="01711xxxxxx" required>
-                        <div class="invalid-feedback" style="width: 100%;">
-                            Your Mobile number is required.
-                        </div>
-                    </div>
-                </div>
+                    <!-- Billing Form -->
+                    <div class="md:col-span-2">
+                        <form action="{{ url('/pay') }}" method="POST" class="space-y-6" @submit.prevent="submitForm">
+                            @csrf
+                            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+                                <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-6">Billing Details
+                                </h3>
 
-                <div class="mb-3">
-                    <label for="email">Email <span class="text-muted">(Optional)</span></label>
-                    <input type="email" name="customer_email" class="form-control" id="email"
-                           placeholder="you@example.com" value="you@example.com" required>
-                    <div class="invalid-feedback">
-                        Please enter a valid email address for shipping updates.
-                    </div>
-                </div>
+                                <!-- Name Field -->
+                                <div class="mb-4">
+                                    <label for="customer_name"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Full Name
+                                    </label>
+                                    <input type="text" name="customer_name" id="customer_name"
+                                        x-model="formData.customerName" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700
+                                        dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                </div>
 
-                <div class="mb-3">
-                    <label for="address">Address</label>
-                    <input type="text" class="form-control" id="address" placeholder="1234 Main St"
-                           value="93 B, New Eskaton Road" required>
-                    <div class="invalid-feedback">
-                        Please enter your shipping address.
-                    </div>
-                </div>
+                                <!-- Mobile Field -->
+                                <div class="mb-4">
+                                    <label for="mobile"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Mobile Number
+                                    </label>
+                                    <div class="flex">
+                                        <span
+                                            class="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300
+                                            dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300">
+                                            +88
+                                        </span>
+                                        <input type="text" name="customer_mobile" id="mobile"
+                                            x-model="formData.customerMobile" class="flex-1 rounded-r-md border-gray-300 dark:border-gray-600 dark:bg-gray-700
+                                            dark:text-white focus:border-blue-500 focus:ring-blue-500" required>
+                                    </div>
+                                </div>
 
-                <div class="mb-3">
-                    <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
-                    <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
-                </div>
+                                <!-- Email Field -->
+                                <div class="mb-4">
+                                    <label for="email"
+                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Email Address
+                                    </label>
+                                    <input type="email" name="customer_email" id="email"
+                                        x-model="formData.customerEmail" class="w-full rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700
+                                        dark:text-white shadow-sm focus:border-blue-500 focus:ring-blue-500" required>
+                                </div>
 
-                <div class="row">
-                    <div class="col-md-5 mb-3">
-                        <label for="country">Country</label>
-                        <select class="custom-select d-block w-100" id="country" required>
-                            <option value="">Choose...</option>
-                            <option value="Bangladesh">Bangladesh</option>
-                        </select>
-                        <div class="invalid-feedback">
-                            Please select a valid country.
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label for="state">State</label>
-                        <select class="custom-select d-block w-100" id="state" required>
-                            <option value="">Choose...</option>
-                            <option value="Dhaka">Dhaka</option>
-                        </select>
-                        <div class="invalid-feedback">
-                            Please provide a valid state.
-                        </div>
-                    </div>
-                    <div class="col-md-3 mb-3">
-                        <label for="zip">Zip</label>
-                        <input type="text" class="form-control" id="zip" placeholder="" required>
-                        <div class="invalid-feedback">
-                            Zip code required.
-                        </div>
+                                <!-- Hidden Amount -->
+                                <input type="hidden" name="amount" x-model="total" />
+
+                                <!-- Submit Button -->
+                                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4
+                                    rounded-md transition duration-200 ease-in-out transform hover:-translate-y-1">
+                                    Proceed to Payment
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
-                <hr class="mb-4">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="same-address">
-                    <input type="hidden" value="1200" name="amount" id="total_amount" required/>
-                    <label class="custom-control-label" for="same-address">Shipping address is the same as my billing
-                        address</label>
-                </div>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="save-info">
-                    <label class="custom-control-label" for="save-info">Save this information for next time</label>
-                </div>
-                <hr class="mb-4">
-                <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout (Hosted)</button>
-            </form>
+            </div>
         </div>
     </div>
+    @push('scripts')
+    <!-- Alpine.js Script -->
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('cart', () => ({
+                items: [
+                    { name: 'Product name', description: 'Brief description', price: 1000 },
+                    { name: 'Second product', description: 'Brief description', price: 50 },
+                    { name: 'Third item', description: 'Brief description', price: 150 }
+                ],
+                formData: {
+                    customerName: 'Tarik Manoar',
+                    customerMobile: '01945606060',
+                    customerEmail: 'tarik@duck.com'
+                },
+                get total() {
+                    return this.items.reduce((sum, item) => sum + item.price, 0);
+                },
+                removeItem(index) {
+                    this.items.splice(index, 1);
+                },
+                submitForm() {
+                    // Here you can handle the form submission
+                    const formData = {
+                        ...this.formData,
+                        amount: this.total,
+                        items: this.items
+                    };
 
-    <footer class="my-5 pt-5 text-muted text-center text-small">
-        <p class="mb-1">&copy; 2019 Company Name</p>
-        <ul class="list-inline">
-            <li class="list-inline-item"><a href="#">Privacy</a></li>
-            <li class="list-inline-item"><a href="#">Terms</a></li>
-            <li class="list-inline-item"><a href="#">Support</a></li>
-        </ul>
-    </footer>
-</div>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
-</html>
+                    // Submit the form
+                    document.querySelector('form').submit();
+                }
+            }));
+        });
+    </script>
+    @endpush
+</x-app-layout>
