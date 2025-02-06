@@ -1,56 +1,50 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
-use Tests\TestCase;
+use Laravel\Jetstream\Http\Livewire\UpdatePasswordForm;
+use Livewire\Livewire;
 
-class UpdatePasswordTest extends TestCase
-{
-    use RefreshDatabase;
+test('password can be updated', function () {
+    $this->actingAs($user = User::factory()->create());
 
-    public function test_password_can_be_updated(): void
-    {
-        $this->actingAs($user = User::factory()->create());
-
-        $response = $this->put('/user/password', [
+    Livewire::test(UpdatePasswordForm::class)
+        ->set('state', [
             'current_password' => 'password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
-        ]);
+        ])
+        ->call('updatePassword');
 
-        $this->assertTrue(Hash::check('new-password', $user->fresh()->password));
-    }
+    expect(Hash::check('new-password', $user->fresh()->password))->toBeTrue();
+});
 
-    public function test_current_password_must_be_correct(): void
-    {
-        $this->actingAs($user = User::factory()->create());
+test('current password must be correct', function () {
+    $this->actingAs($user = User::factory()->create());
 
-        $response = $this->put('/user/password', [
+    Livewire::test(UpdatePasswordForm::class)
+        ->set('state', [
             'current_password' => 'wrong-password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
-        ]);
+        ])
+        ->call('updatePassword')
+        ->assertHasErrors(['current_password']);
 
-        $response->assertSessionHasErrors();
+    expect(Hash::check('password', $user->fresh()->password))->toBeTrue();
+});
 
-        $this->assertTrue(Hash::check('password', $user->fresh()->password));
-    }
+test('new passwords must match', function () {
+    $this->actingAs($user = User::factory()->create());
 
-    public function test_new_passwords_must_match(): void
-    {
-        $this->actingAs($user = User::factory()->create());
-
-        $response = $this->put('/user/password', [
+    Livewire::test(UpdatePasswordForm::class)
+        ->set('state', [
             'current_password' => 'password',
             'password' => 'new-password',
             'password_confirmation' => 'wrong-password',
-        ]);
+        ])
+        ->call('updatePassword')
+        ->assertHasErrors(['password']);
 
-        $response->assertSessionHasErrors();
-
-        $this->assertTrue(Hash::check('password', $user->fresh()->password));
-    }
-}
+    expect(Hash::check('password', $user->fresh()->password))->toBeTrue();
+});
